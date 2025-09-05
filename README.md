@@ -1,39 +1,80 @@
-# xymaker!
+# XYMaker
 
-Hi, this script is useful to get the x.csv and y.csv files from dataset and target or label files, it is like a join function that relates dataset files and target files by common values of the first column of both files, x files usually keep the identifier column and the header rows while y file only contains target values.
+A utility tool for preparing radiomics datasets by creating matched feature (x.csv) and label (y.csv) files from unordered datasets.
 
-In the radiomics workflow it helps to test, specially when the information or target and labels files comes from different sources or persons
+## Overview
 
+XYMaker is designed to help researchers working with radiomics features by aligning feature datasets with their corresponding labels. It functions like a join operation that relates dataset files and target files by common values in their identifier columns.
 
-## How to use
+This tool was created specifically for radiomics workflow preparation, where [PyRadiomics](https://pyradiomics.readthedocs.io/en/latest/) or similar tools generate feature files that need to be matched with clinical outcomes or other labels that may come from different sources or collaborators.
 
-```console
-$ python3 xymaker.py -d [unordered dataset] -t [unordered target] -c [target file column]
+## Installation
 
+```bash
+# Clone the repository
+git clone https://github.com/roghpav/xymaker.git
+cd xymaker
 ```
 
-By default, column selected is 1.
+## How to Use
 
-## How it works
+```bash
+python3 xymaker.py -d [unordered dataset] -t [unordered target] -c [target file column]
+```
 
-The script takes the features file and makes the label file inserting the label value in the correspond line, it is important to note that the guide is the feature file. 
+### Parameters:
 
-Example of feature file (feature file need to be csv):
+- `-d, --dataset`: Path to your features dataset CSV file
+- `-t, --target`: Path to your target/labels CSV file
+- `-c, --column`: Column number in target file to extract as labels (default: 1)
 
-|ID |Feature1|Feature2 |...|
-|-- |---------|---------|---|
-|01 |value		|value		|...|
-|02 |value		|value		|...|
-|...|...			|...			|...|
-|50 |value 	  |value		|...|
+## How It Works
 
-Example of label file (label file need to be csv):
+The script uses the dataset file as a guide and creates:
+1. **x.csv**: Contains the original feature data in the same order
+2. **y.csv**: Contains only the target values corresponding to each row in x.csv
 
-|ID |Label1		|Label2 	|...|
-|-- |---------|---------|---|
-|10 |value		|value		|...|
-|01 |value		|value		|...|
-|...|...			|...			|...|
-|30 |value 	  |value		|...|
+### Example Input Files
 
-x.csv file is similar to feature file while y.csv file just keep the label of selected column
+**Features file (dataset.csv):**
+
+| ID | Feature1 | Feature2 | ... |
+|----|----------|----------|-----|
+| 01 | 0.352    | 1.245    | ... |
+| 02 | 0.861    | 0.723    | ... |
+| 03 | 1.442    | 0.982    | ... |
+| 50 | 2.314    | 1.103    | ... |
+
+**Labels file (labels.csv):**
+
+| ID | Label1   | Label2   | ... |
+|----|----------|----------|-----|
+| 10 | 1        | 0        | ... |
+| 01 | 0        | 1        | ... |
+| 03 | 1        | 0        | ... |
+| 30 | 0        | 1        | ... |
+
+### Example Output Files
+
+**x.csv:**
+- Similar to the features file but potentially reordered
+
+**y.csv:**
+- Contains only the selected label column values matched to corresponding rows in x.csv
+
+## Use in Radiomics Workflow
+
+In radiomics analysis, this tool helps streamline the preparation of datasets for machine learning algorithms by:
+
+1. Ensuring feature data and labels are properly aligned by case ID
+2. Handling scenarios where different team members provide feature extraction and labeling
+3. Preparing data in a format ready for training and testing ML models
+
+## Requirements
+
+- Python 3.x
+- CSV input files with matching IDs in the first column
+
+## License
+
+[MIT License](LICENSE)
